@@ -1,4 +1,4 @@
-db = db.getSiblingDB("fruitdb");
+db = db.getSiblingDB("fruits-db");
 
 db.fruits.drop();
 

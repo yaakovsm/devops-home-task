@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: fruits
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: fruits-db
+    volumes:
+      - mongo_data:/data/db
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - fruits-net
+
+  app:
+    build:
+      context: ./app
+    container_name: fruits-app
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      PORT: 3000
+      MONGO_URI: mongodb://mongo:27017
+      DB_NAME: fruits-db
+      COLLECTION_NAME: fruits
+    ports:
+      - "3000:3000"
+    networks:
+      - fruits-net
+
+networks:
+  fruits-net:
+
+volumes:
+  mongo_data:
