@@ -1,20 +1,21 @@
 # Architecture Diagram
 
+Two long-running containers (`app`, `mongo`) are defined in Compose. Database seeding is not a third container: `db/init/init.js` is mounted into the MongoDB image’s `/docker-entrypoint-initdb.d` and runs **once** when the data volume is empty.
+
 ```mermaid
 flowchart TD
-    U[User / Browser] --> A[Node.js App Container<br/>Express Web Server]
-    A -->|Reads apples count| M[MongoDB Container<br/>fruitdb / fruits collection]
+    user[User / Browser] --> app[Node.js App Container<br/>Express web server]
+    app -->|MongoDB driver| mongo[MongoDB Container<br/>database fruits-db / collection fruits]
 
-    I[Mongo Init Script<br/>db/init/init.js] -->|Seeds required dataset on first startup| M
-
-    subgraph D[Docker Compose Environment]
-        A
-        M
-        I
+    subgraph compose [Docker Compose services]
+        app
+        mongo
     end
 
-    subgraph N[Docker Network: fruits-net]
-        A
-        M
+    subgraph fruitsNet [Docker network fruits-net]
+        app
+        mongo
     end
+
+    init[db/init/init.js on host] -.->|read-only volume to docker-entrypoint-initdb.d<br/>first start only when data volume is empty| mongo
 ```
