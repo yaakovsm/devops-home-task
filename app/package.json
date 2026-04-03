@@ -1,0 +1,13 @@
+{
+  "name": "fruits-app",
+  "version": "1.0.0",
+  "description": "Simple NodeJS app that reads apples count from DB",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongodb": "^6.18.0"
+  }
+}
