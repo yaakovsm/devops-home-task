@@ -1,6 +1,7 @@
 const express = require("express");
 const config = require("./config");
 const { getApplesQty } = require("./db");
+const { seedDatabase } = require("./seed");
 
 const app = express();
 
@@ -48,6 +49,17 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.listen(config.port, () => {
-  console.log(`Server is running on port ${config.port}`);
-});
+async function startServer() {
+  try {
+    await seedDatabase();
+
+    app.listen(config.port, () => {
+      console.log(`Server is running on port ${config.port}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
