@@ -46,6 +46,7 @@ jobs:
           az containerapp update \
             --name $APP_NAME \
             --resource-group $RG \
+            --container-name fruits-app \
             --image $ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG
 
       - name: Show Container App URL
