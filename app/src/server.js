@@ -4,6 +4,10 @@ const { getApplesQty } = require("./db");
 
 const app = express();
 
+app.get("/health", (_req, res) => {
+  res.status(200).type("text/plain").send("ok");
+});
+
 app.get("/", async (req, res) => {
   try {
     const applesQty = await getApplesQty();
