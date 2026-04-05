@@ -1,0 +1,49 @@
+location: eastus
+name: fruits-app
+type: Microsoft.App/containerApps
+
+properties:
+  managedEnvironmentId: /subscriptions/b5fdbe1d-0685-4861-b448-14f2e3410e3d/resourceGroups/rg-fruits-app/providers/Microsoft.App/managedEnvironments/fruits-env
+
+  configuration:
+    ingress:
+      external: true
+      targetPort: 3000
+      transport: auto
+    registries:
+      - server: devopshometask.azurecr.io
+        identity: system
+
+  template:
+    containers:
+      - name: fruits-app
+        image: devopshometask.azurecr.io/fruits-app:v1
+        env:
+          - name: PORT
+            value: "3000"
+          - name: MONGO_URI
+            value: "mongodb://localhost:27017"
+          - name: DB_NAME
+            value: "fruitdb"
+          - name: COLLECTION_NAME
+            value: "fruits"
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+
+      - name: mongo
+        image: mongo:7
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        volumeMounts:
+          - volumeName: mongo-data
+            mountPath: /data/db
+
+    scale:
+      minReplicas: 1
+      maxReplicas: 1
+
+    volumes:
+      - name: mongo-data
+        storageType: EmptyDir
